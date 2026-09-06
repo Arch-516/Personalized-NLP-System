@@ -1,7 +1,20 @@
 import json
 import os
 
-PROFILE_FILE = "data/user_profile.json"
+
+# Project root folder
+BASE_DIR = os.path.dirname(
+    os.path.dirname(
+        os.path.abspath(__file__)
+    )
+)
+
+# User profile file
+PROFILE_FILE = os.path.join(
+    BASE_DIR,
+    "data",
+    "user_profile.json"
+)
 
 
 def create_default_profile():
@@ -13,25 +26,51 @@ def create_default_profile():
 
 
 def load_profile():
+
     if os.path.exists(PROFILE_FILE):
-        with open(PROFILE_FILE, "r") as file:
+
+        with open(
+            PROFILE_FILE,
+            "r",
+            encoding="utf-8"
+        ) as file:
+
             return json.load(file)
 
     profile = create_default_profile()
-
-    with open(PROFILE_FILE, "w") as file:
-        json.dump(profile, file, indent=4)
+    save_profile(profile)
 
     return profile
 
 
 def save_profile(profile):
-    with open(PROFILE_FILE, "w") as file:
-        json.dump(profile, file, indent=4)
+
+    with open(
+        PROFILE_FILE,
+        "w",
+        encoding="utf-8"
+    ) as file:
+
+        json.dump(
+            profile,
+            file,
+            indent=4
+        )
 
 
 def personalize_response(response, profile):
-    if profile["preferred_style"] == "simple":
+
+    style = profile.get(
+        "preferred_style",
+        "simple"
+    )
+
+    if style == "simple":
+
         return "Simple Explanation:\n" + response
-    else:
+
+    elif style == "detailed":
+
         return "Detailed Explanation:\n" + response
+
+    return response
